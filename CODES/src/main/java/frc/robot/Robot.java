@@ -7,29 +7,82 @@
 
 package frc.robot;
 
+import com.revrobotics.ColorSensorV3;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This is a demo program showing the use of the RobotDrive class, specifically
  * it contains the code necessary to operate a robot with tank drive.
  */
 public class Robot extends TimedRobot {
-  private DifferentialDrive m_myRobot;
-  private Joystick m_leftStick;
-  private Joystick m_rightStick;
+
+  private ColorSensorV3 cs = new ColorSensorV3(Port.kOnboard);
+  
+  private Joystick js;
+  
+  private SpeedController tm1 =  new Talon(6);
+  
+  /*
+  private SpeedController mc1 = new Talon(0);
+  private SpeedController mc2 = new Talon(1);
+  private SpeedController mc3 = new Talon(3);
+  private SpeedController mc4 = new Talon(4);
+  private SpeedController motor = new Talon(5);*/
 
   @Override
   public void robotInit() {
-    m_myRobot = new DifferentialDrive(new PWMVictorSPX(0), new PWMVictorSPX(1));
-    m_leftStick = new Joystick(0);
-    m_rightStick = new Joystick(1);
+    js = new Joystick(2);
+     SmartDashboard.putNumber("DriveSpeed", 1);
+    SmartDashboard.putNumber("TestSpeed", 1);
   }
+
+  private double driveSpeed = 1.0d;
+  private double testSpeed = 1.0d;
 
   @Override
   public void teleopPeriodic() {
-    m_myRobot.tankDrive(m_leftStick.getY(), m_rightStick.getY());
+    driveSpeed = SmartDashboard.getNumber("DriveSpeed", 1);
+    testSpeed = SmartDashboard.getNumber("TestSpeed", 1);
+
+    SmartDashboard.putString("CS", ColorSwitch.inputColor(cs.getColor()).toString());
+    if(js.getRawButton(1)){
+      tm1.set(driveSpeed);
+    }else{
+      tm1.set(0);
+    }
+    /*
+    if(js.getRawButton(1)){
+      mc1.set(driveSpeed);
+    }else{
+      mc1.set(0);
+    }
+    if(js.getRawButton(2)){
+      mc2.set(driveSpeed);
+    }else{
+      mc2.set(0);
+    }
+    if(js.getRawButton(3)){
+      mc3.set(driveSpeed);
+    }else{
+      mc3.set(0);
+    }
+    if(js.getRawButton(4)){
+      mc4.set(driveSpeed);
+    }else{
+      mc4.set(0);
+    }
+    if(js.getRawButton(5)){
+      motor.set(testSpeed);
+    }else{
+      motor.set(0);
+    }*/
   }
 }
