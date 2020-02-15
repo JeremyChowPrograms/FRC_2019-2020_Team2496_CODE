@@ -1,27 +1,15 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot;
 
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.I2C.Port;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * This is a demo program showing the use of the RobotDrive class, specifically
- * it contains the code necessary to operate a robot with tank drive.
- */
 public class Robot extends TimedRobot {
 
   private ColorSensorV3 cs = new ColorSensorV3(Port.kOnboard);
@@ -29,13 +17,13 @@ public class Robot extends TimedRobot {
   private Joystick js;
   
   private SpeedController tm1 =  new Talon(6);
+  private SpeedController tm2 = new Talon(7);
+
   
-  /*
   private SpeedController mc1 = new Talon(0);
   private SpeedController mc2 = new Talon(1);
   private SpeedController mc3 = new Talon(3);
   private SpeedController mc4 = new Talon(4);
-  private SpeedController motor = new Talon(5);*/
 
   @Override
   public void robotInit() {
@@ -58,31 +46,40 @@ public class Robot extends TimedRobot {
     }else{
       tm1.set(0);
     }
-    /*
-    if(js.getRawButton(1)){
-      mc1.set(driveSpeed);
-    }else{
-      mc1.set(0);
-    }
     if(js.getRawButton(2)){
-      mc2.set(driveSpeed);
+      tm2.set(testSpeed);
     }else{
-      mc2.set(0);
+      tm2.set(0);
     }
-    if(js.getRawButton(3)){
-      mc3.set(driveSpeed);
-    }else{
-      mc3.set(0);
-    }
+    //MCA
     if(js.getRawButton(4)){
-      mc4.set(driveSpeed);
-    }else{
-      mc4.set(0);
+      mc1.set(0.25);
+      Timer.delay(1);
+      mc1.set(-0.25);
+      Timer.delay(1);
+      mc1.set(0.0);
+      Timer.delay(2);
+      
+      mc2.set(0.25);
+      Timer.delay(1);
+      mc2.set(-0.25);
+      Timer.delay(1);
+      mc2.set(0.0);
+      Timer.delay(2);
+      
+      mc3.set(0.25);
+      Timer.delay(1);
+      mc3.set(-0.25);
+      Timer.delay(1);
+      mc3.set(0.0);
+      Timer.delay(2);
+      
+      mc4.set(0.25);
+      Timer.delay(1);
+      mc4.set(-0.25);
+      Timer.delay(1);
+      mc4.set(0.0);
+      Timer.delay(2);
     }
-    if(js.getRawButton(5)){
-      motor.set(testSpeed);
-    }else{
-      motor.set(0);
-    }*/
   }
 }
