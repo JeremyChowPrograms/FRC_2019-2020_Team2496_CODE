@@ -2,7 +2,11 @@ package frc.robot;
 
 import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.UsbCameraInfo;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -12,14 +16,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
 
+  private UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
   private ColorSensorV3 cs = new ColorSensorV3(Port.kOnboard);
-  
+  private Servo servo = new Servo(8);
+
   private Joystick js;
-  
-  private SpeedController tm1 =  new Talon(6);
+
+  private SpeedController tm1 = new Talon(6);
   private SpeedController tm2 = new Talon(7);
 
-  
   private SpeedController mc1 = new Talon(0);
   private SpeedController mc2 = new Talon(1);
   private SpeedController mc3 = new Talon(3);
@@ -27,8 +32,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    camera.setResolution(400, 300);
+    camera.setFPS(120);
     js = new Joystick(2);
-     SmartDashboard.putNumber("DriveSpeed", 1);
+    SmartDashboard.putNumber("DriveSpeed", 1);
     SmartDashboard.putNumber("TestSpeed", 1);
   }
 
@@ -41,39 +48,42 @@ public class Robot extends TimedRobot {
     testSpeed = SmartDashboard.getNumber("TestSpeed", 1);
 
     SmartDashboard.putString("CS", ColorSwitch.inputColor(cs.getColor()).toString());
-    if(js.getRawButton(1)){
+    if (js.getRawButton(1)) {
+      servo.setAngle(180);
       tm1.set(driveSpeed);
-    }else{
+    } else {
+      servo.setAngle(0);
       tm1.set(0);
     }
-    if(js.getRawButton(2)){
+    if (js.getRawButton(2)) {
       tm2.set(testSpeed);
-    }else{
+    } else {
       tm2.set(0);
     }
-    //MCA
-    if(js.getRawButton(4)){
+
+    // MCA
+    if (js.getRawButton(4)) {
       mc1.set(0.25);
       Timer.delay(1);
       mc1.set(-0.25);
       Timer.delay(1);
       mc1.set(0.0);
       Timer.delay(2);
-      
+
       mc2.set(0.25);
       Timer.delay(1);
       mc2.set(-0.25);
       Timer.delay(1);
       mc2.set(0.0);
       Timer.delay(2);
-      
+
       mc3.set(0.25);
       Timer.delay(1);
       mc3.set(-0.25);
       Timer.delay(1);
       mc3.set(0.0);
       Timer.delay(2);
-      
+
       mc4.set(0.25);
       Timer.delay(1);
       mc4.set(-0.25);

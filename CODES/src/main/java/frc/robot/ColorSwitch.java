@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.util.Color;
 public class ColorSwitch {
 
     public enum PossibleColor {
-        RED, BLUE, YELLOW, GREEN, WTF
+        RED, BLUE, YELLOW, GREEN, WHITE, WTF
     }
 
     private ColorSwitch() {
