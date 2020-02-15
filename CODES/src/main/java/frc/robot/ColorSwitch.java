@@ -1,7 +1,5 @@
 package frc.robot;
 
-import com.revrobotics.ColorSensorV3;
-
 import edu.wpi.first.wpilibj.util.Color;
 
 public class ColorSwitch {
