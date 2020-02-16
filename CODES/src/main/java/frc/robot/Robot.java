@@ -3,7 +3,6 @@ package frc.robot;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.cscore.UsbCamera;
-import edu.wpi.cscore.UsbCameraInfo;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Servo;
@@ -49,10 +48,10 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putString("CS", ColorSwitch.inputColor(cs.getColor()).toString());
     if (js.getRawButton(1)) {
-      servo.setAngle(180);
+      servo.set(1);;
       tm1.set(driveSpeed);
     } else {
-      servo.setAngle(0);
+      servo.set(0);
       tm1.set(0);
     }
     if (js.getRawButton(2)) {
