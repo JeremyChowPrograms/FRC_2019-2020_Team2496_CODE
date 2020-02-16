@@ -4,6 +4,7 @@ import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -12,16 +13,17 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.ColorSwitch.PossibleColor;
 
 public class Robot extends TimedRobot {
 
   private UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
   private ColorSensorV3 cs = new ColorSensorV3(Port.kOnboard);
-  private Servo servo = new Servo(8);
+  private SpeedController servo = new Talon(9);
 
   private Joystick js;
 
-  private SpeedController tm1 = new Talon(6);
+  private SpeedController tm1 = new Talon(8);
   private SpeedController tm2 = new Talon(7);
 
   private SpeedController mc1 = new Talon(0);
@@ -45,13 +47,10 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     driveSpeed = SmartDashboard.getNumber("DriveSpeed", 1);
     testSpeed = SmartDashboard.getNumber("TestSpeed", 1);
-
     SmartDashboard.putString("CS", ColorSwitch.inputColor(cs.getColor()).toString());
     if (js.getRawButton(1)) {
-      servo.set(1);;
       tm1.set(driveSpeed);
     } else {
-      servo.set(0);
       tm1.set(0);
     }
     if (js.getRawButton(2)) {
@@ -59,7 +58,46 @@ public class Robot extends TimedRobot {
     } else {
       tm2.set(0);
     }
-
+    if(js.getRawButton(5)){
+      servo.set(-0.5);
+    }else if(js.getRawButton(6)){
+      servo.set(.5);
+    }else{
+      servo.set(0.0d);
+    }
+    if (js.getRawButton(3)) {
+      String gameData = DriverStation.getInstance().getGameSpecificMessage();
+      PossibleColor color = PossibleColor.WTF;
+      if (gameData.length() > 0) {
+        switch (gameData.charAt(0)) {
+        case 'B':
+          color = PossibleColor.RED;
+          break;
+        case 'G':
+          color = PossibleColor.YELLOW;
+          break;
+        case 'R':
+          color = PossibleColor.BLUE;
+          break;
+        case 'Y':
+          color = PossibleColor.GREEN;
+          break;
+        default:
+          // This is corrupt data
+          break;
+        }
+      }
+      tm1.set(1.0);
+      boolean antiBreak = true;
+      while (antiBreak) {
+        if (ColorSwitch.inputColor(cs.getColor()) == color) {
+          Timer.delay(.5);
+          if (ColorSwitch.inputColor(cs.getColor()) == color)
+            antiBreak = false;
+        }
+      } 
+      tm1.set(0.0);
+    }
     // MCA
     if (js.getRawButton(4)) {
       mc1.set(0.25);
