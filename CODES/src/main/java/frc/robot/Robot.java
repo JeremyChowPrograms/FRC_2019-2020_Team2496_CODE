@@ -25,11 +25,12 @@ public class Robot extends TimedRobot {
 
   private SpeedController tm1 = new Talon(8);
   private SpeedController tm2 = new Talon(7);
-
-  private SpeedController mc1 = new Talon(0);
-  private SpeedController mc2 = new Talon(1);
-  private SpeedController mc3 = new Talon(3);
-  private SpeedController mc4 = new Talon(4);
+  private ReversibleChassisControl rcc = new ReversibleChassisControl(3, 0, 4, 6);
+  /*
+   * private SpeedController mc1 = new Talon(0); private SpeedController mc2 = new
+   * Talon(3); private SpeedController mc3 = new Talon(4); private SpeedController
+   * mc4 = new Talon(6);
+   */
 
   @Override
   public void robotInit() {
@@ -58,11 +59,11 @@ public class Robot extends TimedRobot {
     } else {
       tm2.set(0);
     }
-    if(js.getRawButton(5)){
+    if (js.getRawButton(5)) {
       servo.set(-0.5);
-    }else if(js.getRawButton(6)){
+    } else if (js.getRawButton(6)) {
       servo.set(.5);
-    }else{
+    } else {
       servo.set(0.0d);
     }
     if (js.getRawButton(3)) {
@@ -83,7 +84,6 @@ public class Robot extends TimedRobot {
           color = PossibleColor.GREEN;
           break;
         default:
-          // This is corrupt data
           break;
         }
       }
@@ -95,38 +95,15 @@ public class Robot extends TimedRobot {
           if (ColorSwitch.inputColor(cs.getColor()) == color)
             antiBreak = false;
         }
-      } 
+      }
       tm1.set(0.0);
     }
-    // MCA
-    if (js.getRawButton(4)) {
-      mc1.set(0.25);
-      Timer.delay(1);
-      mc1.set(-0.25);
-      Timer.delay(1);
-      mc1.set(0.0);
-      Timer.delay(2);
-
-      mc2.set(0.25);
-      Timer.delay(1);
-      mc2.set(-0.25);
-      Timer.delay(1);
-      mc2.set(0.0);
-      Timer.delay(2);
-
-      mc3.set(0.25);
-      Timer.delay(1);
-      mc3.set(-0.25);
-      Timer.delay(1);
-      mc3.set(0.0);
-      Timer.delay(2);
-
-      mc4.set(0.25);
-      Timer.delay(1);
-      mc4.set(-0.25);
-      Timer.delay(1);
-      mc4.set(0.0);
-      Timer.delay(2);
+    rcc.tankDrive(-js.getRawAxis(1) * driveSpeed, -js.getRawAxis(5) * driveSpeed);
+    if (js.getRawButton(7)) {
+      rcc.StraightForward = true;
+    }
+    if (js.getRawButton(8)) {
+      rcc.StraightForward = false;
     }
   }
 }
