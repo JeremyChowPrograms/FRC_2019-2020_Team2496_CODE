@@ -21,22 +21,24 @@ public class Robot extends TimedRobot {
   private ColorSensorV3 cs = new ColorSensorV3(Port.kOnboard);
   private SpeedController servo = new Talon(9);
 
-  private Joystick js;
+  //private Joystick js;
+
+  private Joystick jsl;
+
+  private Joystick jsr;
 
   private SpeedController tm1 = new Talon(8);
   private SpeedController tm2 = new Talon(7);
+  private SpeedController tm3 = new Talon(5);
   private ReversibleChassisControl rcc = new ReversibleChassisControl(3, 0, 4, 6);
-  /*
-   * private SpeedController mc1 = new Talon(0); private SpeedController mc2 = new
-   * Talon(3); private SpeedController mc3 = new Talon(4); private SpeedController
-   * mc4 = new Talon(6);
-   */
-
+ 
   @Override
   public void robotInit() {
     camera.setResolution(400, 300);
-    camera.setFPS(120);
-    js = new Joystick(2);
+    camera.setFPS(30);
+    //js = new Joystick(2);
+    jsl = new Joystick(0);
+    jsr = new Joystick(1);
     SmartDashboard.putNumber("DriveSpeed", 1);
     SmartDashboard.putNumber("TestSpeed", 1);
   }
@@ -45,28 +47,36 @@ public class Robot extends TimedRobot {
   private double testSpeed = 1.0d;
 
   @Override
+  public void autonomousPeriodic() {
+    rcc.tankDrive(0, 0);
+  }
+
+  @Override
+  public void disabledPeriodic() {
+    SmartDashboard.putString("CS", ColorSwitch.inputColor(cs.getColor()).toString());
+  }
+
+  @Override
   public void teleopPeriodic() {
     driveSpeed = SmartDashboard.getNumber("DriveSpeed", 1);
     testSpeed = SmartDashboard.getNumber("TestSpeed", 1);
+    SmartDashboard.putString("Drive State", rcc.StraightForward?"Forward":"Reverse");
     SmartDashboard.putString("CS", ColorSwitch.inputColor(cs.getColor()).toString());
-    if (js.getRawButton(1)) {
-      tm1.set(driveSpeed);
-    } else {
+    if (jsr.getRawButton(3)) {
+      tm1.set(1);
+    } else if(jsr.getRawButton(1)){
+      tm1.set(-1);
+    }else{
       tm1.set(0);
     }
-    if (js.getRawButton(2)) {
-      tm2.set(testSpeed);
-    } else {
-      tm2.set(0);
-    }
-    if (js.getRawButton(5)) {
+    if (jsr.getRawButton(4)) {
       servo.set(-0.5);
-    } else if (js.getRawButton(6)) {
+    } else if (jsr.getRawButton(5)) {
       servo.set(.5);
     } else {
       servo.set(0.0d);
     }
-    if (js.getRawButton(3)) {
+    /*if (js.getRawButton(3)) {
       String gameData = DriverStation.getInstance().getGameSpecificMessage();
       PossibleColor color = PossibleColor.WTF;
       if (gameData.length() > 0) {
@@ -97,13 +107,27 @@ public class Robot extends TimedRobot {
         }
       }
       tm1.set(0.0);
-    }
-    rcc.tankDrive(-js.getRawAxis(1) * driveSpeed, -js.getRawAxis(5) * driveSpeed);
-    if (js.getRawButton(7)) {
+    }*/
+    if(jsl.getRawButton(1)){
+      tm3.set(1);
+    }else
+    tm3.set(0.0);
+    rcc.tankDrive(jsl.getRawAxis(1) * (jsl.getRawAxis(2)-1)/2, jsr.getRawAxis(1) * (jsr.getRawAxis(2)-1)/2);
+    if (jsl.getRawButton(4)) {
       rcc.StraightForward = true;
     }
-    if (js.getRawButton(8)) {
+    if (jsl.getRawButton(5)) {
       rcc.StraightForward = false;
     }
+    if(jsl.getRawButton(3))
+    {
+      tm2.set(.5);
+    }else
+      if(jsr.getRawButton(2)){
+        tm2.set(-.5);
+      }else{
+        tm2.set(0);
+      }
+    
   }
 }
