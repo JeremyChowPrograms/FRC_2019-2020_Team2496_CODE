@@ -21,7 +21,7 @@ public class Robot extends TimedRobot {
   private ColorSensorV3 cs = new ColorSensorV3(Port.kOnboard);
   private SpeedController servo = new Talon(9);
 
-  //private Joystick js;
+  private Joystick gjs;
 
   private Joystick jsl;
 
@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     camera.setResolution(400, 300);
     camera.setFPS(30);
-    //js = new Joystick(2);
+    gjs = new Joystick(2);
     jsl = new Joystick(0);
     jsr = new Joystick(1);
     SmartDashboard.putNumber("DriveSpeed", 1);
@@ -56,22 +56,24 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("CS", ColorSwitch.inputColor(cs.getColor()).toString());
   }
 
+  private boolean gAuthority = false;
+
   @Override
   public void teleopPeriodic() {
     driveSpeed = SmartDashboard.getNumber("DriveSpeed", 1);
     testSpeed = SmartDashboard.getNumber("TestSpeed", 1);
     SmartDashboard.putString("Drive State", rcc.StraightForward?"Forward":"Reverse");
     SmartDashboard.putString("CS", ColorSwitch.inputColor(cs.getColor()).toString());
-    if (jsr.getRawButton(3)) {
+    if (jsr.getRawButton(3)&&gAuthority==false) {
       tm1.set(1);
-    } else if(jsr.getRawButton(1)){
+    } else if(jsr.getRawButton(1)&&gAuthority==false){
       tm1.set(-1);
     }else{
       tm1.set(0);
     }
-    if (jsr.getRawButton(4)) {
+    if (jsr.getRawButton(4)&&gAuthority==false) {
       servo.set(-0.5);
-    } else if (jsr.getRawButton(5)) {
+    } else if (jsr.getRawButton(5)&&gAuthority==false) {
       servo.set(.5);
     } else {
       servo.set(0.0d);
@@ -108,26 +110,31 @@ public class Robot extends TimedRobot {
       }
       tm1.set(0.0);
     }*/
-    if(jsl.getRawButton(1)){
+    if(jsl.getRawButton(1)&&gAuthority==false){
       tm3.set(1);
     }else
     tm3.set(0.0);
+    if(gAuthority==false)
     rcc.tankDrive(jsl.getRawAxis(1) * (jsl.getRawAxis(2)-1)/2, jsr.getRawAxis(1) * (jsr.getRawAxis(2)-1)/2);
-    if (jsl.getRawButton(4)) {
+    if (jsl.getRawButton(4)&&gAuthority==false) {
       rcc.StraightForward = true;
     }
-    if (jsl.getRawButton(5)) {
+    if (jsl.getRawButton(5)&&gAuthority==false) {
       rcc.StraightForward = false;
     }
-    if(jsl.getRawButton(3))
+    if(jsl.getRawButton(3)&&gAuthority==false)
     {
       tm2.set(.5);
     }else
-      if(jsr.getRawButton(2)){
+      if(jsr.getRawButton(2)&&gAuthority==false){
         tm2.set(-.5);
       }else{
         tm2.set(0);
       }
-    
+
+    if(gjs.getRawButton(1))
+    gAuthority=true;
+    if(gjs.getRawButton(2))
+    gAuthority=false;
   }
 }
