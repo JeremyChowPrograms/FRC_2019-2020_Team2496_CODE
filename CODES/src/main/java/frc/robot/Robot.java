@@ -21,7 +21,7 @@ public class Robot extends TimedRobot {
   private ColorSensorV3 cs = new ColorSensorV3(Port.kOnboard);
   private SpeedController servo = new Talon(9);
 
-  private Joystick gjs;
+  //private Joystick gjs;
 
   private Joystick jsl;
 
@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     camera.setResolution(400, 300);
     camera.setFPS(30);
-    gjs = new Joystick(2);
+   // gjs = new Joystick(2);
     jsl = new Joystick(0);
     jsr = new Joystick(1);
     SmartDashboard.putNumber("DriveSpeed", 1);
@@ -45,6 +45,15 @@ public class Robot extends TimedRobot {
 
   private double driveSpeed = 1.0d;
   private double testSpeed = 1.0d;
+
+  @Override
+  public void autonomousInit(){
+    rcc.StraightForward=true;
+    rcc.tankDrive(0.5, 0.5);
+    Timer.delay(
+      4
+    );
+  }
 
   @Override
   public void autonomousPeriodic() {
@@ -116,6 +125,8 @@ public class Robot extends TimedRobot {
     tm3.set(0.0);
     if(gAuthority==false)
     rcc.tankDrive(jsl.getRawAxis(1) * (jsl.getRawAxis(2)-1)/2, jsr.getRawAxis(1) * (jsr.getRawAxis(2)-1)/2);
+    else
+    rcc.arcadeDrive(-jsr.getRawAxis(0)*driveSpeed, -jsr.getRawAxis(1)*driveSpeed);
     if (jsl.getRawButton(4)&&gAuthority==false) {
       rcc.StraightForward = true;
     }
@@ -131,10 +142,10 @@ public class Robot extends TimedRobot {
       }else{
         tm2.set(0);
       }
-
+/*
     if(gjs.getRawButton(1))
     gAuthority=true;
     if(gjs.getRawButton(2))
-    gAuthority=false;
+    gAuthority=false;/* */
   }
 }
